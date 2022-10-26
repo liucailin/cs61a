@@ -1,7 +1,6 @@
 """The Game of Hog."""
 
 from timeit import repeat
-from tkinter import W
 from dice import six_sided, make_test_dice
 from ucb import main, trace, interact
 from math import log2, sqrt
@@ -169,6 +168,9 @@ def always_roll(n):
     assert n >= 0 and n <= 10
     # BEGIN PROBLEM 6
     "*** YOUR CODE HERE ***"
+    def fn(x,y):
+        return n
+    return fn
     # END PROBLEM 6
 
 
@@ -199,6 +201,18 @@ def is_always_roll(strategy, goal=GOAL):
     """
     # BEGIN PROBLEM 7
     "*** YOUR CODE HERE ***"
+    p = None
+    i = 0
+    while i < goal:
+        j = 0
+        while j < goal:
+            r = strategy(i, j)
+            if p != None and r != p:
+                return False
+            p = r
+            j += 1
+        i += 1
+    return True
     # END PROBLEM 7
 
 
@@ -215,6 +229,16 @@ def make_averaged(original_function, total_samples=1000):
     """
     # BEGIN PROBLEM 8
     "*** YOUR CODE HERE ***"
+    n = total_samples
+    def fn(*args):
+        sum = 0
+        nonlocal n
+        i = n
+        while i > 0:
+            sum += original_function(*args)
+            i -=1
+        return sum / n
+    return fn
     # END PROBLEM 8
 
 
@@ -229,6 +253,16 @@ def max_scoring_num_rolls(dice=six_sided, total_samples=1000):
     """
     # BEGIN PROBLEM 9
     "*** YOUR CODE HERE ***"
+    fn = make_averaged(roll_dice, total_samples)
+    i = 1
+    maxv, maxi = None, None
+    while i <= 10: 
+        r = fn(i, dice)
+        if maxv == None or r > maxv:
+            maxv = r
+            maxi = i
+        i += 1
+    return maxi
     # END PROBLEM 9
 
 
@@ -260,6 +294,8 @@ def run_experiments():
     print('catch_up win rate:', average_win_rate(catch_up))
     print('always_roll(3) win rate:', average_win_rate(always_roll(3)))
     print('always_roll(8) win rate:', average_win_rate(always_roll(8)))
+    print('always_roll(10) win rate:', average_win_rate(always_roll(10)))
+    print('always_roll(5) win rate:', average_win_rate(always_roll(5)))
 
     print('tail_strategy win rate:', average_win_rate(tail_strategy))
     print('square_strategy win rate:', average_win_rate(square_strategy))
@@ -272,6 +308,8 @@ def tail_strategy(score, opponent_score, threshold=12, num_rolls=6):
     points, and returns NUM_ROLLS otherwise. Ignore score and Square Swine.
     """
     # BEGIN PROBLEM 10
+    if tail_points(opponent_score) >= threshold:
+        return 0
     return num_rolls  # Remove this line once implemented.
     # END PROBLEM 10
 
@@ -279,6 +317,8 @@ def tail_strategy(score, opponent_score, threshold=12, num_rolls=6):
 def square_strategy(score, opponent_score, threshold=12, num_rolls=6):
     """This strategy returns 0 dice when your score would increase by at least threshold."""
     # BEGIN PROBLEM 11
+    if square_update(0, score, opponent_score) - score >= threshold:
+        return 0
     return num_rolls  # Remove this line once implemented.
     # END PROBLEM 11
 
@@ -289,8 +329,9 @@ def final_strategy(score, opponent_score):
     *** YOUR DESCRIPTION HERE ***
     """
     # BEGIN PROBLEM 12
-    return 6  # Remove this line once implemented.
-    # END PROBLEM 12
+    if square_update(0, score, opponent_score) - score >= 12 or (score - opponent_score >= 20):
+        return 0
+    return 6
 
 
 ##########################
