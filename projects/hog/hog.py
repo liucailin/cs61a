@@ -1,8 +1,10 @@
 """The Game of Hog."""
 
+from timeit import repeat
+from tkinter import W
 from dice import six_sided, make_test_dice
 from ucb import main, trace, interact
-from math import log2
+from math import log2, sqrt
 
 GOAL = 100  # The goal of Hog is to score 100 points.
 
@@ -23,6 +25,18 @@ def roll_dice(num_rolls, dice=six_sided):
     assert num_rolls > 0, 'Must roll at least once.'
     # BEGIN PROBLEM 1
     "*** YOUR CODE HERE ***"
+    total = 0
+    sad = False
+    while num_rolls > 0:
+        num_rolls = num_rolls - 1
+        d = dice()
+        if d == 1:
+            sad = True
+        total = total + d
+    if sad:
+        return 1
+    else:
+        return total
     # END PROBLEM 1
 
 
@@ -34,6 +48,7 @@ def tail_points(opponent_score):
     """
     # BEGIN PROBLEM 2
     "*** YOUR CODE HERE ***"
+    return 2 * abs(opponent_score // 10 % 10 - opponent_score % 10) + 1
     # END PROBLEM 2
 
 
@@ -51,6 +66,10 @@ def take_turn(num_rolls, opponent_score, dice=six_sided):
     assert num_rolls <= 10, 'Cannot roll more than 10 dice.'
     # BEGIN PROBLEM 3
     "*** YOUR CODE HERE ***"
+    if num_rolls == 0:
+        return tail_points(opponent_score)
+    else:
+        return roll_dice(num_rolls, dice)
     # END PROBLEM 3
 
 
@@ -74,6 +93,11 @@ def square_update(num_rolls, player_score, opponent_score, dice=six_sided):
 
 # BEGIN PROBLEM 4
 "*** YOUR CODE HERE ***"
+def perfect_square(score):
+    return sqrt(score).is_integer()
+
+def next_perfect_square(score):
+    return int(pow(sqrt(score) + 1, 2))
 # END PROBLEM 4
 
 
@@ -113,6 +137,13 @@ def play(strategy0, strategy1, update,
     who = 0  # Who is about to take a turn, 0 (first) or 1 (second)
     # BEGIN PROBLEM 5
     "*** YOUR CODE HERE ***"
+    while True:
+        score0 = update(strategy0(score0, score1), score0, score1, dice)
+        if score0 >= goal:
+            break
+        score1 = update(strategy1(score1, score0), score1, score0, dice)
+        if score1 >= goal:
+            break
     # END PROBLEM 5
     return score0, score1
 
