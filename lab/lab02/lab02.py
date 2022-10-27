@@ -13,8 +13,7 @@ def lambda_curry2(func):
     >>> lambda_curry2(mod)(123)(10)
     3
     """
-    "*** YOUR CODE HERE ***"
-    return ______
+    return lambda x : lambda y: func(x, y)
 
 
 def lambda_curry2_syntax_check():
@@ -55,7 +54,14 @@ def count_cond(condition):
     >>> count_primes(20)   # 2, 3, 5, 7, 11, 13, 17, 19
     8
     """
-    "*** YOUR CODE HERE ***"
+    def count(n):
+        total, k = 0, 1
+        while k <= n:
+            if condition(n, k):
+                total += 1
+            k += 1
+        return total
+    return count
 
 
 def composer(f, g):
@@ -90,7 +96,7 @@ def composite_identity(f, g):
     >>> b1(4)                            # (4 + 1)^2 != 4^2 + 1
     False
     """
-    "*** YOUR CODE HERE ***"
+    return lambda n: f(g(n)) == g(f(n))
 
 
 def cycle(f1, f2, f3):
@@ -119,4 +125,24 @@ def cycle(f1, f2, f3):
     >>> do_two_cycles(1)
     19
     """
-    "*** YOUR CODE HERE ***"
+    def f(n):
+        def cycler(x):
+            if n == 0:
+                return x
+            k = 0
+            arg = x
+            while k < n:
+                f = None
+                r = k % 3 + 1
+                if r == 1:
+                    f = f1
+                elif r  == 2:
+                    f = f2
+                elif r == 3:
+                    f = f3
+
+                arg = f(arg)
+                k = k + 1
+            return arg
+        return cycler
+    return f
