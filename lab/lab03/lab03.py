@@ -254,4 +254,4 @@ def pow_church(m, n):
     >>> church_to_int(pow_church(three, two))
     9
     """
-    return lambda f: n(m)
+    return n(m)
