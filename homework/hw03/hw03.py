@@ -24,8 +24,10 @@ def num_eights(pos):
     ...       ['Assign', 'AnnAssign', 'AugAssign', 'NamedExpr', 'For', 'While'])
     True
     """
-    "*** YOUR CODE HERE ***"
-
+    if pos < 10:
+        return 1 if pos == 8 else 0
+    else:
+        return num_eights(pos % 10) + num_eights(pos // 10)
 
 def pingpong(n):
     """Return the nth element of the ping-pong sequence.
@@ -60,8 +62,54 @@ def pingpong(n):
     ...       ['Assign', 'AnnAssign', 'AugAssign', 'NamedExpr'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    return pingpong_rec(1, n, 0, 1)
 
+def pingpong_rec(k, n, total, dir):
+    if k <= n:
+        total = total + dir
+        if k % 8 == 0 or num_eights(k) > 0:
+            dir *= -1
+        return pingpong_rec(k+1, n, total, dir)
+    else:
+        return total
+
+
+def pingpong_iter(n):
+    """Return the nth element of the ping-pong sequence.
+
+    >>> pingpong_iter(8)
+    8
+    >>> pingpong_iter(10)
+    6
+    >>> pingpong_iter(15)
+    1
+    >>> pingpong_iter(21)
+    -1
+    >>> pingpong_iter(22)
+    -2
+    >>> pingpong_iter(30)
+    -2
+    >>> pingpong_iter(68)
+    0
+    >>> pingpong_iter(69)
+    -1
+    >>> pingpong_iter(80)
+    0
+    >>> pingpong_iter(81)
+    1
+    >>> pingpong_iter(82)
+    0
+    >>> pingpong_iter(100)
+    -6
+    """
+    total, k, dir = 0, 1, 1
+    while k <= n:
+        total = total + dir
+        if k % 8 == 0 or num_eights(k) > 0:
+            dir *= -1
+        k = k + 1
+    return total
+        
 
 def next_larger_coin(coin):
     """Returns the next larger coin in order.
@@ -116,7 +164,28 @@ def count_coins(change):
     >>> check(HW_SOURCE_FILE, 'count_coins', ['While', 'For'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    max = 1
+    if change >= 25:
+        max = 25
+    elif change >= 10:
+        max = 10
+    elif change >= 5:
+        max = 5
+
+    print("DEBUG:MAX", max)
+
+    return count_coin_rec(change,  max)
+
+def count_coin_rec(change, max):
+    if change < 0:
+        return 0
+    elif change < 1:
+        return 1
+    elif max == 1:
+        return 1
+
+    return count_coin_rec(change - max, max) + count_coin_rec(change, next_smaller_coin(max))
+    
 
 
 anonymous = False  # Change to True if you would like to remain anonymous on the final leaderboard.
