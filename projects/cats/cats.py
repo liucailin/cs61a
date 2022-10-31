@@ -30,7 +30,13 @@ def pick(paragraphs, select, k):
     ''
     """
     # BEGIN PROBLEM 1
-    "*** YOUR CODE HERE ***"
+    i = 0
+    for element in paragraphs:
+        if select(element):
+            if i == k:
+                return element
+            i += 1
+    return ""
     # END PROBLEM 1
 
 
@@ -49,7 +55,13 @@ def about(topic):
     """
     assert all([lower(x) == x for x in topic]), 'topics should be lowercase.'
     # BEGIN PROBLEM 2
-    "*** YOUR CODE HERE ***"
+    def fn(paragraph):
+        paragraph = split(lower(remove_punctuation(paragraph)))
+        for element in topic:
+            if element in paragraph:
+                return True
+        return False
+    return fn
     # END PROBLEM 2
 
 
@@ -78,8 +90,19 @@ def accuracy(typed, source):
     """
     typed_words = split(typed)
     source_words = split(source)
+    if len(source_words) == 0:
+        return 0.0 if len(typed_words) != 0 else 100.0
+    elif len(typed_words) == 0:
+        return 0.0 if len(source_words) != 0 else 100.0
+        
     # BEGIN PROBLEM 3
-    "*** YOUR CODE HERE ***"
+    k = 0
+    for i in range(len(typed_words)):
+        if i < len(source_words) and source_words[i] == typed_words[i]:
+            k += 1
+    
+    return k / len(typed_words) * 100
+
     # END PROBLEM 3
 
 
