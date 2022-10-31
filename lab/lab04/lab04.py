@@ -74,6 +74,25 @@ def paths(m, n):
 
     return helper(1, 1)
 
+def path_no_helper(m, n):
+    """ from topright to bottomleft
+    just change the direction, get rid of the helper function
+    """
+    if m == 1 and n == 1:
+        return 1
+    if m < 1 or n < 1:
+        return 0
+    return path_no_helper_faster(m - 1, n) + path_no_helper_faster(m, n - 1)
+
+def path_no_helper_faster(m, n):
+    """ from topright to bottomleft
+    if reach edge the found the way because can only move one way left
+    """
+    if m == 1 or n == 1:
+        return 1
+    return path_no_helper_faster(m - 1, n) + path_no_helper_faster(m, n - 1)
+    
+
 
 
 def couple(s, t):
@@ -122,6 +141,14 @@ def double_eights(n):
 
     return helper(n, 0)
 
+def double_eights_no_helper(n):
+    """ simpler think one more step
+    """
+    last, second_last = n % 10, n // 10 % 10
+    if n < 100:
+        return False
+    return (last == 8 and second_last == 8) or double_eights_no_helper(n // 10)
+
 
 
 
@@ -132,7 +159,7 @@ def coords(fn, seq, lower, upper):
     >>> coords(fn, seq, 1, 9)
     [[-2, 4], [1, 1], [3, 9]]
     """
-    return [[x,fn(x)] for x in seq if fn(x) >= lower and fn(x) <= upper]
+    return [[x,fn(x)] for x in seq if lower <= fn(x) <= upper]
 
 
 def riffle(deck):
