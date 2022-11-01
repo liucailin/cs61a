@@ -235,67 +235,6 @@ def feline_fixes(typed, source, limit):
     
     # END PROBLEM 6
 
-def minimum_mewtations_test(start, goal, limit):
-
-    def helper(start, goal, limit):
-
-        if start == goal:
-            return 1
-        elif goal == '' or start == '':
-            return 1
-        else:
-            left = helper(start[0], goal[0], limit)
-            if left == 1:
-                return helper(goal[0]+start, goal, limit)
-                # remove = helper(start[1:], goal, limit)
-                # substitute = helper(goal[0]+start[1:], goal, limit)
-            else:
-                right = helper(start[1:], goal[1:], limit)
-                return left + right
-            
-
-
-def minimum_mewtations_bak(start, goal, limit):
-    """A diff function that computes the edit distance from START to GOAL.
-    This function takes in a string START, a string GOAL, and a number LIMIT.
-    Arguments:
-        start: a starting word
-        goal: a goal word
-        limit: a number representing an upper bound on the number of edits
-    >>> big_limit = 10
-    >>> minimum_mewtations("cats", "scat", big_limit)       # cats -> scats -> scat
-    2
-    >>> minimum_mewtations("purng", "purring", big_limit)   # purng -> purrng -> purring
-    2
-    >>> minimum_mewtations("ckiteus", "kittens", big_limit) # ckiteus -> kiteus -> kitteus -> kittens
-    3
-    """
-    assert False, 'Remove this line'
-    if ______________:  # Fill in the condition
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
-    elif ___________:  # Feel free to remove or add additional cases
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
-    else:
-        add = ...  # Fill in these lines
-        remove = ...
-        substitute = ...
-        # BEGIN
-        "*** YOUR CODE HERE ***"
-        # END
-
-def minimum_mewtations_iter(start, goal, limit):
-    ks, kg = len(start), len(goal)
-    n = 0
-    for i in range(kg):
-        if start[i] != goal[i]:
-            n += 1
-
-
-    return 0
 
 
 def minimum_mewtations(start, goal, limit):
@@ -313,17 +252,26 @@ def minimum_mewtations(start, goal, limit):
     >>> minimum_mewtations("ckiteus", "kittens", big_limit) # ckiteus -> kiteus -> kitteus -> kittens
     3
     """
+
     if start == goal:
         return 0
+    elif len(goal) == 0:
+        return len(start)
+    elif len(start) == 0:
+        return len(goal)
+    elif start[0] != goal[0]:
+        # add, remove, substitute = 0, 0, 0
+        add = 1 + minimum_mewtations(goal[0] + start, goal, limit)
+        remove = 1 + minimum_mewtations(start[1:], goal, limit)
+        substitute = 1 + minimum_mewtations(goal[0] + start[1:], goal, limit)
+        result = min(add, remove, substitute)
+        # print("DEBUG:>>>>>>>>>", add, mut)
+        return result
     else:
-        return minimum_mewtations_mut(start[0], goal[0]) + minimum_mewtations_mut[start[1:]]
+        result = minimum_mewtations(start[1:], goal[1:], limit-1)
+            # print("DEBUG:>>>>>>>>>", result)
+        return result
 
-def minimum_mewtations_mut(start, goal):
-               
-    add = minimum_mewtations_mut(goal[0] + start, goal)
-    remove = minimum_mewtations_mut(start[1:], goal)
-    substitute = minimum_mewtations_mut(goal[0] + start[1:], goal)
-    return max(add, remove, substitute)
 
 
 def final_diff(typed, source, limit):
