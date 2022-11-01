@@ -364,7 +364,15 @@ def report_progress(typed, prompt, user_id, upload):
     0.2
     """
     # BEGIN PROBLEM 8
-    "*** YOUR CODE HERE ***"
+    n = 0
+    for i in range(len(typed)):
+        if prompt[i] == typed[i]:
+            n += 1
+        else:
+            break
+    progress = n / len(prompt)
+    upload({"id":user_id, "progress": progress})
+    return progress
     # END PROBLEM 8
 
 
@@ -386,7 +394,14 @@ def time_per_word(words, times_per_player):
     [[6, 3, 6, 2], [10, 6, 1, 2]]
     """
     # BEGIN PROBLEM 9
-    "*** YOUR CODE HERE ***"
+    times = [[x[i]-x[i-1] for i in range(1, len(x))] for x in times_per_player]
+    # for element in times_per_player:
+    #     a = []
+    #     for i in range(1, len(element)):
+    #         a.append(element[i] - element[i-1])
+    #     times.append(a)
+            
+    return match(words, times)
     # END PROBLEM 9
 
 
@@ -408,7 +423,20 @@ def fastest_words(match):
     player_indices = range(len(get_all_times(match)))  # contains an *index* for each player
     word_indices = range(len(get_all_words(match)))    # contains an *index* for each word
     # BEGIN PROBLEM 10
-    "*** YOUR CODE HERE ***"
+    #TODO list comprehensions?
+    fast = []
+    for j in player_indices:
+        fast.append([])
+    for i in word_indices:
+        min_p, min_j = None, None
+        for j in player_indices:
+            t = time(match, j, i)
+            if not min_p or t < min_p:
+                min_p, min_j = t, j
+        fast[min_j].append(get_word(match, i))
+
+    return fast
+        
     # END PROBLEM 10
 
 
