@@ -14,7 +14,27 @@ def flatten(s):
     >>> x
     [[1, [1, 1]], 1, [1, 1]]
     """
-    "*** YOUR CODE HERE ***"
+    if not s:
+      return []
+    elif type(s[0]) == list:
+      return flatten(s[0]) + flatten(s[1:])
+    else:
+      return [s[0]] + flatten(s[1:])
+
+
+    # result = []
+
+    # def helper(s, r):
+    #   for e in s:
+    #     if type(e) == list:
+    #       helper(e, r)
+    #     else:
+    #       r.append(e)
+
+    # helper(s, result)
+    # return result
+
+
 
 
 from math import sqrt
@@ -31,7 +51,7 @@ def distance(city_a, city_b):
     >>> distance(city_c, city_d)
     5.0
     """
-    "*** YOUR CODE HERE ***"
+    return sqrt((get_lat(city_a) - get_lat(city_b)) ** 2 + (get_lon(city_a) - get_lon(city_b)) ** 2)
 
 
 def closer_city(lat, lon, city_a, city_b):
@@ -49,7 +69,10 @@ def closer_city(lat, lon, city_a, city_b):
     >>> closer_city(41.29, 174.78, bucharest, vienna)
     'Bucharest'
     """
-    "*** YOUR CODE HERE ***"
+    c = make_city('', lat,  lon)
+    if distance(c, city_a) < distance(c, city_b):
+      return get_name(city_a)
+    return get_name(city_b)
 
 
 def check_city_abstraction():
@@ -150,7 +173,14 @@ def berry_finder(t):
     >>> berry_finder(t)
     True
     """
-    "*** YOUR CODE HERE ***"
+    if label(t) == 'berry':
+      return True
+    else:
+      for b in branches(t):
+        if berry_finder(b):
+          return True
+      return False
+    
 
 
 def sprout_leaves(t, leaves):
@@ -186,7 +216,8 @@ def sprout_leaves(t, leaves):
           1
           2
     """
-    "*** YOUR CODE HERE ***"
+    return tree(label(t), [tree(label(b), [tree(leave) for leave in leaves]) if is_leaf(b) else sprout_leaves(b, leaves) for b in branches(t)])
+
 
 # Abstraction tests for sprout_leaves and berry_finder
 
@@ -249,7 +280,7 @@ def preorder(t):
     >>> preorder(tree(2, [tree(4, [tree(6)])]))
     [2, 4, 6]
     """
-    "*** YOUR CODE HERE ***"
+    return sum([preorder(b) for b in branches(t)], [label(t)])
 
 
 def add_trees(t1, t2):
