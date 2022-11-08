@@ -163,28 +163,6 @@ def autocorrect(typed_word, word_list, diff_function, limit):
     # END PROBLEM 5
 
 
-# k_diff_sum = 0
-
-# def feline_fixes_test(typed, source, limit):
-#     i, j = len(typed), len(source)
-#     if i == 1 and j == 1:
-#         return 0 if typed == source else 1
-#     elif i == 0:
-#         return j
-#     elif j == 0:
-#         return i
-#     print('diff1:', typed, source)
-#     left = feline_fixes_test(typed[0], source[1], limit)
-#     print('diff2', left, typed, source)
-#     global k_diff_sum
-#     k_diff_sum += 1
-#     if k_diff_sum > limit:
-#         return limit + 1
-#     right = feline_fixes_test(typed[1:], source[1:], limit)
-#     print('diff3:', right, typed, source)
-#     return left + right
-
-
 def feline_fixes(typed, source, limit):
     """A diff function for autocorrect that determines how many letters
     in TYPED need to be substituted to create SOURCE, then adds the difference in
@@ -208,7 +186,23 @@ def feline_fixes(typed, source, limit):
     5
     """
     # BEGIN PROBLEM 6
+    # return feline_fixes_helper(typed, source, limit)
+    kt, ks = len(typed), len(source)
+    # if kt == 1 and ks == 1:
+    #     return 0 if typed == source else 1
+    if kt == 0:
+        return ks
+    elif ks == 0:
+        return kt
+    elif typed[0] != source[0]:
+        if limit == 0:
+            return 1
+        return 1 + feline_fixes(typed[1:], source[1:], limit - 1)
+    else:
+        return feline_fixes(typed[1:], source[1:], limit)
+    # END PROBLEM 6
 
+def feline_fixes_helper(typed, source, limit):
     diff_sum = 0
 
     # TODO ugly helper function
@@ -232,10 +226,6 @@ def feline_fixes(typed, source, limit):
                 return left + right
 
     return helper(typed, source, limit)
-    
-    # END PROBLEM 6
-
-
 
 def minimum_mewtations(start, goal, limit):
     """A diff function that computes the edit distance from START to GOAL.
@@ -252,8 +242,9 @@ def minimum_mewtations(start, goal, limit):
     >>> minimum_mewtations("ckiteus", "kittens", big_limit) # ckiteus -> kiteus -> kitteus -> kittens
     3
     """
-
-    if start == goal:
+    if limit < 0:
+        return 0
+    elif start == goal:
         return 0
     elif len(goal) == 0:
         return len(start)
@@ -261,14 +252,14 @@ def minimum_mewtations(start, goal, limit):
         return len(goal)
     elif start[0] != goal[0]:
         # add, remove, substitute = 0, 0, 0
-        add = 1 + minimum_mewtations(goal[0] + start, goal, limit)
-        remove = 1 + minimum_mewtations(start[1:], goal, limit)
-        substitute = 1 + minimum_mewtations(goal[0] + start[1:], goal, limit)
+        add = 1 + minimum_mewtations(goal[0] + start, goal, limit-1)
+        remove = 1 + minimum_mewtations(start[1:], goal, limit-1)
+        substitute = 1 + minimum_mewtations(goal[0] + start[1:], goal, limit-1)
         result = min(add, remove, substitute)
         # print("DEBUG:>>>>>>>>>", add, mut)
         return result
     else:
-        result = minimum_mewtations(start[1:], goal[1:], limit-1)
+        result = minimum_mewtations(start[1:], goal[1:], limit)
             # print("DEBUG:>>>>>>>>>", result)
         return result
 
