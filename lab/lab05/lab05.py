@@ -318,7 +318,22 @@ def add_trees(t1, t2):
         5
       5
     """
-    "*** YOUR CODE HERE ***"
+
+    if not t1:
+      return t2
+    elif not t2:
+      return t1
+
+    b1 = branches(t1)
+    b2 = branches(t2)
+
+    
+    if len(b1) < len(b2):
+      b1 += [None for _ in range(len(b1), len(b2))]
+    elif len(b1) > len(b2):
+      b2 += [None for _ in range(len(b2), len(b1))]
+
+    return tree(label(t1) + label(t2), [add_trees(b1,b2) for b1,b2 in zip(b1, b2)])
 
 
 def change_abstraction(change):
