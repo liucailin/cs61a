@@ -64,13 +64,13 @@ def end(s):
 def planet(mass):
     """Construct a planet of some mass."""
     assert mass > 0
-    "*** YOUR CODE HERE ***"
+    return ['planet', mass]
 
 
 def mass(w):
     """Select the mass of a planet."""
     assert is_planet(w), 'must call mass on a planet'
-    "*** YOUR CODE HERE ***"
+    return w[1]
 
 
 def is_planet(w):
@@ -130,7 +130,15 @@ def balanced(m):
     >>> check(HW_SOURCE_FILE, 'balanced', ['Index'])
     True
     """
-    "*** YOUR CODE HERE ***"
+
+    if is_planet(m):
+        return True
+
+    left_arm, right_arm = left(m), right(m)
+    left_end, right_end = end(left_arm), end(right_arm)
+
+    return total_weight(left_end) * length(left_arm) == total_weight(right_end) * length(right_arm) \
+        and balanced(left_end) and balanced(right_end)
 
 
 def totals_tree(m):
@@ -162,7 +170,10 @@ def totals_tree(m):
     >>> check(HW_SOURCE_FILE, 'totals_tree', ['Index'])
     True
     """
-    "*** YOUR CODE HERE ***"
+    if is_planet(m):
+        return tree(mass(m))
+
+    return tree(total_weight(m),  [totals_tree(end(left(m))),  totals_tree(end(right(m)))])
 
 
 def replace_loki_at_leaf(t, lokis_replacement):
@@ -194,7 +205,9 @@ def replace_loki_at_leaf(t, lokis_replacement):
     >>> laerad == yggdrasil # Make sure original tree is unmodified
     True
     """
-    "*** YOUR CODE HERE ***"
+    if is_leaf(t):
+        return tree(lokis_replacement if label(t) == 'loki' else label(t))
+    return tree(label(t), [replace_loki_at_leaf(b, lokis_replacement) for b in branches(t)])
 
 
 def has_path(t, word):
@@ -228,7 +241,15 @@ def has_path(t, word):
     False
     """
     assert len(word) > 0, 'no path for empty word.'
-    "*** YOUR CODE HERE ***"
+    if len(word) == 1:
+        return label(t) == word[0]
+
+    for b in branches(t):
+        if has_path(b, word[1:]):
+            return True
+    return False
+
+    return any([has_path(b, word[1:]) for b in branches(t)]) # oneline
 
 
 def str_interval(x):
@@ -252,12 +273,12 @@ def interval(a, b):
 
 def lower_bound(x):
     """Return the lower bound of interval x."""
-    "*** YOUR CODE HERE ***"
+    return x[0]
 
 
 def upper_bound(x):
     """Return the upper bound of interval x."""
-    "*** YOUR CODE HERE ***"
+    return x[1]
 
 
 def str_interval(x):
@@ -276,24 +297,25 @@ def add_interval(x, y):
 def mul_interval(x, y):
     """Return the interval that contains the product of any value in x and any
     value in y."""
-    p1 = x[0] * y[0]
-    p2 = x[0] * y[1]
-    p3 = x[1] * y[0]
-    p4 = x[1] * y[1]
-    return [min(p1, p2, p3, p4), max(p1, p2, p3, p4)]
+    p1 = lower_bound(x) * lower_bound(y)
+    p2 = lower_bound(x) * upper_bound(y)
+    p3 = upper_bound(x) * lower_bound(y)
+    p4 = upper_bound(x) * upper_bound(y)
+    return interval(min(p1, p2, p3, p4), max(p1, p2, p3, p4))
 
 
 def sub_interval(x, y):
     """Return the interval that contains the difference between any value in x
     and any value in y."""
-    "*** YOUR CODE HERE ***"
+    negative_y = interval(-upper_bound(y), -lower_bound(y))
+    return add_interval(x, negative_y)
 
 
 def div_interval(x, y):
     """Return the interval that contains the quotient of any value in x divided by
     any value in y. Division is implemented as the multiplication of x by the
     reciprocal of y."""
-    "*** YOUR CODE HERE ***"
+    assert not (lower_bound(y) <= 0 <= upper_bound(y)), 'Divide by zero'
     reciprocal_y = interval(1 / upper_bound(y), 1 / lower_bound(y))
     return mul_interval(x, reciprocal_y)
 
