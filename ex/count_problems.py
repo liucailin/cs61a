@@ -112,6 +112,28 @@ def count_partitions(n, m):
         return count_partitions(n-m, m) + count_partitions(n, m-1)
 
 
+def yield_partitions(n, m):
+    """Yield_partitions.
+
+    >>> for p in yield_partitions(6, 4): print(p)
+    2 + 4
+    1 + 1 + 4
+    3 + 3
+    1 + 2 + 3
+    1 + 1 + 1 + 3
+    2 + 2 + 2
+    1 + 1 + 2 + 2
+    1 + 1 + 1 + 1 + 2
+    1 + 1 + 1 + 1 + 1 + 1
+    """
+    if n > 0 and m > 0:
+        if n == m:
+            yield str(m)
+        for p in yield_partitions(n-m, m):
+            yield p + ' + ' + str(m)
+        yield from yield_partitions(n, m-1)
+
+
 def count_coins(change):
     """Return the number of ways to make change using coins of value of 1, 5, 10, 25.
     >>> count_coins(15)
