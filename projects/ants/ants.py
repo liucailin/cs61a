@@ -52,6 +52,7 @@ class Insect:
     """An Insect, the base class of Ant and Bee, has health and a Place."""
 
     damage = 0
+    is_waterproof = False
     # ADD CLASS ATTRIBUTES HERE
 
     def __init__(self, health, place=None):
@@ -155,7 +156,7 @@ class Ant(Insect):
     def double(self):
         """Double this ants's damage, if it has not already been doubled."""
         # BEGIN Problem 12
-        "*** YOUR CODE HERE ***"
+        self.damage = self.damage * 2
         # END Problem 12
 
 
@@ -410,17 +411,29 @@ class Water(Place):
         """Add an Insect to this place. If the insect is not waterproof, reduce
         its health to 0."""
         # BEGIN Problem 10
-        "*** YOUR CODE HERE ***"
+        super().add_insect(insect)
+        if not insect.is_waterproof:
+            insect.reduce_health(insect.health)
         # END Problem 10
 
 # BEGIN Problem 11
 # The ScubaThrower class
+class ScubaThrower(ThrowerAnt):
+    """
+    """
+    name = 'Scuba'
+    food_cost = 6
+    implemented = True
+    is_waterproof = True
+
+    def __init__(self, health=1):
+        super().__init__(health)
 # END Problem 11
 
 # BEGIN Problem 12
 
 
-class QueenAnt(Ant):  # You should change this line
+class QueenAnt(ScubaThrower):  # You should change this line
 # END Problem 12
     """The Queen of the colony. The game is over if a bee enters her place."""
 
@@ -428,8 +441,13 @@ class QueenAnt(Ant):  # You should change this line
     food_cost = 7
     # OVERRIDE CLASS ATTRIBUTES HERE
     # BEGIN Problem 12
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem 12
+
+    def __init__(self, health=1):
+        self.double_ants = {}
+        super().__init__(health)
+
 
     @classmethod
     def construct(cls, gamestate):
@@ -438,7 +456,11 @@ class QueenAnt(Ant):  # You should change this line
         returns None otherwise. Remember to call the construct() method of the superclass!
         """
         # BEGIN Problem 12
-        "*** YOUR CODE HERE ***"
+        if gamestate.queen_ant:
+            return None
+        ant = super().construct(gamestate)
+        gamestate.queen_ant = ant
+        return ant
         # END Problem 12
 
     def action(self, gamestate):
@@ -446,7 +468,20 @@ class QueenAnt(Ant):  # You should change this line
         in her tunnel.
         """
         # BEGIN Problem 12
-        "*** YOUR CODE HERE ***"
+        place = self.place.exit
+        while place:
+            if place.ant:
+                if place.ant not in self.double_ants:
+                    place.ant.double()
+                    self.double_ants[place.ant] = True
+                if place.ant.is_container and place.ant.ant_contained:
+                    if place.ant.ant_contained not in self.double_ants:
+                        place.ant.ant_contained.double()
+                        self.double_ants[place.ant.ant_contained] = True
+            
+            place = place.exit
+
+        super().action(gamestate)
         # END Problem 12
 
     def reduce_health(self, amount):
@@ -456,6 +491,14 @@ class QueenAnt(Ant):  # You should change this line
         # BEGIN Problem 12
         "*** YOUR CODE HERE ***"
         # END Problem 12
+        if self.health - amount <= 0:
+           ants_lose()
+        else:
+            super().reduce_health(amount)
+
+    def remove_from(self, place):
+        # return super().remove_from(place)
+        """"""
 
 
 class AntRemover(Ant):
@@ -474,6 +517,7 @@ class Bee(Insect):
     name = 'Bee'
     damage = 1
     # OVERRIDE CLASS ATTRIBUTES HERE
+    is_waterproof = True
 
     def sting(self, ant):
         """Attack an ANT, reducing its health by 1."""
@@ -546,13 +590,24 @@ class SlowThrower(ThrowerAnt):
     name = 'Slow'
     food_cost = 6
     # BEGIN Problem EC
-    implemented = False   # Change to True to view in the GUI
+    implemented = True   # Change to True to view in the GUI
     # END Problem EC
 
     def throw_at(self, target):
 
         # BEGIN Problem EC
-        "*** YOUR CODE HERE ***"
+        orgin_action = target.action
+        max_action = 5
+        cur_action = 0
+        def new_action(gamestate):
+            if gamestate.time % 2 == 0:
+                orgin_action(gamestate)
+            nonlocal cur_action
+            cur_action = cur_action + 1
+            if cur_action == max_action:
+                target.action = orgin_action
+        target.action = new_action
+        super().throw_at(target)
         # END Problem EC
 
 
@@ -697,6 +752,7 @@ class GameState:
         self.configure(beehive, create_places)
         # BEGIN Problem 12
         "*** YOUR CODE HERE ***"
+        self.queen_ant = None
         # END Problem 12
 
     def configure(self, beehive, create_places):
