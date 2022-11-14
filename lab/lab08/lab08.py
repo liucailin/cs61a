@@ -7,7 +7,14 @@ def convert_link(link):
     >>> convert_link(Link.empty)
     []
     """
-    "*** YOUR CODE HERE ***"
+    if link is Link.empty:
+        return []
+    result = []
+    while link.rest is not Link.empty:
+        result.append(link.first)
+        link = link.rest
+    result.append(link.first)
+    return result
 
 
 def duplicate_link(link, val):
@@ -29,7 +36,12 @@ def duplicate_link(link, val):
     >>> z
     Link(1, Link(2, Link(2, Link(2, Link(2, Link(3))))))
     """
-    "*** YOUR CODE HERE ***"
+    while link.rest is not Link.empty:
+        if link.first == val:
+            link.rest = Link(val, link.rest)
+            link = link.rest.rest
+        else:
+            link = link.rest
 
 
 def cumulative_mul(t):
@@ -45,7 +57,11 @@ def cumulative_mul(t):
     >>> otherTree
     Tree(5040, [Tree(60, [Tree(3), Tree(4), Tree(5)]), Tree(42, [Tree(7)])])
     """
-    "*** YOUR CODE HERE ***"
+    if t.is_leaf():
+        return
+    for b in t.branches:
+        cumulative_mul(b)
+        t.label *= b.label
 
 
 def every_other(s):
@@ -65,7 +81,10 @@ def every_other(s):
     >>> singleton
     Link(4)
     """
-    "*** YOUR CODE HERE ***"
+
+    while s and s.rest is not Link.empty:
+        s.rest = s.rest.rest
+        s = s.rest
 
 
 def prune_small(t, n):
@@ -85,11 +104,11 @@ def prune_small(t, n):
     >>> t3
     Tree(6, [Tree(1), Tree(3, [Tree(1), Tree(2)])])
     """
-    while ___________________________:
-        largest = max(_______________, key=____________________)
-        _________________________
-    for __ in _____________:
-        ___________________
+    while len(t.branches) > n:
+        largest = max(t.branches, key=lambda b: b.label)
+        t.branches.remove(largest)
+    for b in t.branches:
+        prune_small(b, n)
 
 
 class Link:
