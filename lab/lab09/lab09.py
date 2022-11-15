@@ -27,7 +27,7 @@ def subseqs(s):
         rest = subseqs(s[1:])
         return insert_into_all(s[0], rest) + rest
 
-# REV
+# REV 2
 def non_decrease_subseqs(s):
     """Assuming that S is a list, return a nested list of all subsequences
     of S (a list of lists) for which the elements of the subsequence
@@ -53,7 +53,7 @@ def non_decrease_subseqs(s):
             return insert_into_all(s[0], a) + b
     return subseq_helper(s, float('-inf'))
 
-# REV
+# REV 2
 def num_trees(n):
     """Returns the number of unique full binary trees with exactly n leaves. E.g.,
 
@@ -339,13 +339,14 @@ def make_to_string(front, mid, back, empty_repr):
     return printer
 
 
+# REV 1.使用helper函数记录深度，2.掌握返回所有路径的写法 3. 如果不用helper则用n记录
 def long_paths(t, n):
     """Return a list of all paths in t with length at least n.
 
     >>> long_paths(Tree(1), 0)
-    [1]
+    [[1]]
     >>> long_paths(Tree(1), 1)
-    [1]
+    []
     >>> t = Tree(3, [Tree(4), Tree(4), Tree(5)])
     >>> left = Tree(1, [Tree(2), t])
     >>> mid = Tree(6, [Tree(7, [Tree(8)]), Tree(9)])
@@ -389,11 +390,34 @@ def long_paths(t, n):
     >>> long_paths(whole, 4)
     [[0, 11, 12, 13, 14]]
     """
-    if t.is_leaf():
-        return [t.label]
-    return [[t.label] + long_paths(b, n) for b in t.branches]
+
+    # def helper(t, d):
+    #     if t.is_leaf():
+    #         if d >= n:
+    #             return [[t.label]]
+    #         else:
+    #             return []
+        
+    #     paths = []
+    #     for b in t.branches:
+    #         for p in helper(b, d+1):
+    #             sp = [t.label] + p
+    #             # print("DEBUG:", sp,d)
+    #             # if len(sp) > n:
+    #             paths.append(sp)
+    #     return paths
+
+    # return helper(t, 0)
+
+    if n <= 0 and t.is_leaf():
+        return [[t.label]]
+    
+    return [[t.label] + p for b in t.branches for p in long_paths(b, n - 1)]
 
 
+
+
+# REV 1
 def reverse_other(t):
     """Mutates the tree such that nodes on every other (odd-depth)
     level have the labels of their branches all reversed.
@@ -407,7 +431,19 @@ def reverse_other(t):
     >>> t
     Tree(1, [Tree(8, [Tree(3, [Tree(5), Tree(4)]), Tree(6, [Tree(7)])]), Tree(2)])
     """
-    "*** YOUR CODE HERE ***"
+    lst = [(t,0)]
+    depth = 1
+    while lst:
+        p, d = lst.pop(0)
+        # print(p.label)
+        if d > depth:
+            depth += 1
+        for b in p.branches:
+            lst.append((b, depth+1))
+        if depth % 2 != 0:
+            for i in range(len(p.branches)//2):
+                p.branches[i].label, p.branches[-i-1].label  = p.branches[-i-1].label,  p.branches[i].label
+
 
 
 class Link:
