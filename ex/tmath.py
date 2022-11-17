@@ -11,3 +11,4 @@ def babylonian_sqrt(x):
         return update(next_guess)
 
     return update(1)
+
