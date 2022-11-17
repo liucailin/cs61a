@@ -3,30 +3,44 @@ test = {
   'points': 1,
   'suites': [
     {
-      'type': 'scheme',
-      'setup': r"""
-      scm> (load-all ".")
-      """,
       'cases': [
         {
           'code': r"""
           scm> (cddr '(1 2 3 4))
-          (3 4)
+          0ed1a53f06011effab45b3ff5d11631b
+          # locked
           """,
+          'hidden': False,
+          'locked': True,
+          'multiline': False
         },
         {
           'code': r"""
           scm> (cadr '(1 2 3 4))
-          2
+          9e912e512c4a5bd85d3693205c7f635c
+          # locked
           """,
+          'hidden': False,
+          'locked': True,
+          'multiline': False
         },
         {
           'code': r"""
           scm> (caddr '(1 2 3 4))
-          3
+          b13af181ea4aa633930e92779ea49cee
+          # locked
           """,
-        },
+          'hidden': False,
+          'locked': True,
+          'multiline': False
+        }
       ],
-    },
+      'scored': True,
+      'setup': r"""
+      scm> (load-all ".")
+      """,
+      'teardown': '',
+      'type': 'scheme'
+    }
   ]
 }

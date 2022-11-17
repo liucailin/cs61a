@@ -3,36 +3,54 @@ test = {
   'points': 1,
   'suites': [
     {
-      'type': 'scheme',
       'cases': [
         {
           'code': r"""
           scm> (pow 2 5)
-          32
+          d1c05859088731cddc25d57af25e5e7d
+          # locked
           """,
+          'hidden': False,
+          'locked': True,
+          'multiline': False
         },
         {
           'code': r"""
           scm> (pow 10 3)
-          1000
+          9f6b25a938d2c535093b558cfd80db4c
+          # locked
           """,
+          'hidden': False,
+          'locked': True,
+          'multiline': False
         },
         {
           'code': r"""
           scm> (pow 3 3)
-          27
+          79243357e7940aa5b7c895d9a8f545ce
+          # locked
           """,
+          'hidden': False,
+          'locked': True,
+          'multiline': False
         },
         {
           'code': r"""
           scm> (pow 1 100000000000000) ; make sure this doesn't run forever!
-          1
+          c246989ba42191bcf781a5b9bc9b80ea
+          # locked
           """,
-        },
+          'hidden': False,
+          'locked': True,
+          'multiline': False
+        }
       ],
-      'setup': """
+      'scored': True,
+      'setup': r"""
       scm> (load-all ".")
       """,
-    },
+      'teardown': '',
+      'type': 'scheme'
+    }
   ]
 }
