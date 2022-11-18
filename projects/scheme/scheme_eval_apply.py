@@ -34,7 +34,7 @@ def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
         return scheme_forms.SPECIAL_FORMS[first](rest, env)
     else:
         # BEGIN PROBLEM 3
-        return scheme_apply(env.lookup(first), rest, env)
+        return scheme_apply(scheme_eval(first, env), rest.map(lambda x: scheme_eval(x, env)), env)
         # END PROBLEM 3
 
 
@@ -62,11 +62,13 @@ def scheme_apply(procedure, args, env):
             raise SchemeError('incorrect number of arguments: {0}'.format(procedure))
     elif isinstance(procedure, LambdaProcedure):
         # BEGIN PROBLEM 9
-        "*** YOUR CODE HERE ***"
+        child = procedure.env.make_child_frame(procedure.formals, args)
+        return eval_all(procedure.body, child)
         # END PROBLEM 9
     elif isinstance(procedure, MuProcedure):
         # BEGIN PROBLEM 11
-        "*** YOUR CODE HERE ***"
+        child = env.make_child_frame(procedure.formals, args)
+        return eval_all(procedure.body, child)
         # END PROBLEM 11
     else:
         assert False, "Unexpected procedure: {}".format(procedure)
@@ -88,7 +90,11 @@ def eval_all(expressions, env):
     2
     """
     # BEGIN PROBLEM 6
-    return scheme_eval(expressions.first, env)  # replace this with lines of your own code
+    val = None
+    while expressions != nil:
+        val = scheme_eval(expressions.first, env)
+        expressions = expressions.rest
+    return val
     # END PROBLEM 6
 
 
