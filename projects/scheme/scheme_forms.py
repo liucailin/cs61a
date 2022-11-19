@@ -123,7 +123,13 @@ def do_and_form(expressions, env):
     False
     """
     # BEGIN PROBLEM 12
-    "*** YOUR CODE HERE ***"
+    val = True
+    while expressions != nil:
+        val = scheme_eval(expressions.first, env)
+        if is_scheme_false(val):
+            return val
+        expressions = expressions.rest
+    return val
     # END PROBLEM 12
 
 
@@ -142,7 +148,13 @@ def do_or_form(expressions, env):
     6
     """
     # BEGIN PROBLEM 12
-    "*** YOUR CODE HERE ***"
+    val = False
+    while expressions != nil:
+        val = scheme_eval(expressions.first, env)
+        if is_scheme_true(val):
+            return val
+        expressions = expressions.rest
+    return val
     # END PROBLEM 12
 
 
@@ -163,7 +175,10 @@ def do_cond_form(expressions, env):
             test = scheme_eval(clause.first, env)
         if is_scheme_true(test):
             # BEGIN PROBLEM 13
-            "*** YOUR CODE HERE ***"
+            # print("DEBUG:", clause, test)
+            if clause.rest is nil:
+                return test
+            return eval_all(clause.rest, env)
             # END PROBLEM 13
         expressions = expressions.rest
 
@@ -189,7 +204,23 @@ def make_let_frame(bindings, env):
         raise SchemeError('bad bindings list in let form')
     names = vals = nil
     # BEGIN PROBLEM 14
-    "*** YOUR CODE HERE ***"
+    lname = lval = nil
+    while bindings is not nil:
+        validate_form(bindings.first, 2, 2)
+        name = Pair(bindings.first.first, nil)
+        val = Pair(scheme_eval(bindings.first.rest.first, env), nil)
+        if lname:
+            lname.rest = name
+        if lval:
+            lval.rest = val
+        if names is nil:
+            names = name
+        if vals is nil:
+            vals = val
+        lname, lval = name, val
+
+        bindings = bindings.rest
+    validate_formals(names)
     # END PROBLEM 14
     return env.make_child_frame(names, vals)
 
@@ -204,7 +235,14 @@ def do_define_macro(expressions, env):
     1
     """
     # BEGIN PROBLEM OPTIONAL_1
-    "*** YOUR CODE HERE ***"
+    validate_form(expressions, 2)
+    signature = expressions.first
+    if isinstance(signature, Pair) and scheme_symbolp(signature.first):
+        validate_formals(signature.rest)
+        env.define(signature.first, MacroProcedure(signature.rest, expressions.rest, env))
+        return signature.first
+    else:
+        raise SchemeError('improper form for define-macro')
     # END PROBLEM OPTIONAL_1
 
 

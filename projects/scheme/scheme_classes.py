@@ -132,3 +132,14 @@ class MuProcedure(Procedure):
     def __repr__(self):
         return 'MuProcedure({0}, {1})'.format(
             repr(self.formals), repr(self.body))
+
+class MacroProcedure(Procedure):
+    """"""
+    def __init__(self, formals, body, env):
+        self.formals = formals
+        self.body = body
+        self.env = env
+
+    def __str__(self):
+        return str(Pair('lambda', Pair(self.formals, self.body)))
+
