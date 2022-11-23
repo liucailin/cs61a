@@ -1,5 +1,6 @@
 (define-macro (when condition exprs)
-  'YOUR-CODE-HERE)
+  (list 'if condition (cons 'begin exprs) ''okay)
+)
 
 (define-macro (switch expr cases)
   (cons _________
