@@ -36,9 +36,9 @@ CREATE TABLE size_of_dogs AS
 
 -- Filling out this helper table is optional
 CREATE TABLE siblings AS
-  SELECT "REPLACE THIS LINE WITH YOUR SOLUTION";
+  select a.child as first, b.child as second from parents as a, parents as b where a.parent = b.parent and a.child < b.child;
 
 -- Sentences about siblings that are the same size
 CREATE TABLE sentences AS
-  SELECT "REPLACE THIS LINE WITH YOUR SOLUTION";
+  SELECT "The two siblings, " || first || " plus " || second || " have the same size: " || size from  siblings, size_of_dogs where ????;
 
