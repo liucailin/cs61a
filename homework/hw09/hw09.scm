@@ -3,7 +3,7 @@
 )
 
 (define-macro (switch expr cases)
-  (cons _________
-        (map (_________ (_________)
-                        (cons _________ (cdr case)))
+  (cons 'cond
+        (map (lambda (case)
+                        (cons (eq? (car case) (eval expr)) (cdr case)))
              cases)))
