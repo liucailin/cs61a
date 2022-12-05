@@ -116,21 +116,11 @@ def repeated(f):
     [1, 2, 4, 8, 16]
     """
 
-
-
-    def successor(n):
-        return lambda f: lambda x: f(n(f)(x))
-
-    def composer(func1, func2):
-        def f(x):
-            return func1(func2(x))
-        return f
-
-    g = lambda f: lambda x : x
+    g = lambda x : x
     
     while True:
-        yield g(f)
-        g = successor(g)
+        yield g
+        g = (lambda g: lambda x: f(g(x)))(g)
 
 
 class Tree:
